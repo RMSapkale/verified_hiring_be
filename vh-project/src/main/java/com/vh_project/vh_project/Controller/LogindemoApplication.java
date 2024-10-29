@@ -1,0 +1,12 @@
+package com.vh_project.vh_project.Controller;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class LogindemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(LogindemoApplication.class, args);
+    }
+}
