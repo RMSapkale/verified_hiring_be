@@ -1,4 +1,4 @@
-package com.vh_project.vh_project.service;
+package com.verifiedHiring.service;
 
 import org.springframework.stereotype.Service;
 

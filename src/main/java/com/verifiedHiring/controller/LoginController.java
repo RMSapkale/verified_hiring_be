@@ -1,4 +1,4 @@
-package com.vh_project.vh_project.controller;
+package com.verifiedHiring.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
