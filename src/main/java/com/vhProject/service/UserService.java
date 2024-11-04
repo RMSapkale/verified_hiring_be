@@ -4,8 +4,8 @@ import com.vhProject.Util.EmailUtil;
 import com.vhProject.Util.OtpUtil;
 import com.vhProject.repository.UserRepository;
 import com.vhProject.model.UserModel; // Import the User class
-import com.vhProject.Dto.RegisterDto;
-import com.vhProject.Dto.LoginDto;
+import com.vhProject.dto.RegisterDto;
+import com.vhProject.dto.LoginDto;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,15 @@ import java.time.LocalDateTime;
 @Service
 public class UserService {
 
-
     private OtpUtil OtpUtil;
+
+    private final EmailUtil emailUtil;
+
     @Autowired
-    private EmailUtil emailUtil;
+    public UserService(EmailUtil emailUtil) {
+        this.emailUtil = emailUtil;
+    }
+
     @Autowired
     private UserRepository userRepository;
 

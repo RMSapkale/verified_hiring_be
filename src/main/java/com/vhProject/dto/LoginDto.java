@@ -1,22 +1,19 @@
-package com.vhProject.Dto;
+package com.vhProject.dto;
 
-public class RegisterDto {
-    private String name;
+import lombok.Data;
+
+@Data //No need to make getter setter
+public class LoginDto {
     private String email;
     private String password;
 
     // Constructor, if necessary
-    public RegisterDto(String name, String email, String password) {
-        this.name = name;
+    public LoginDto(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
     // Getters
-    public String getName() {
-        return name;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -26,10 +23,6 @@ public class RegisterDto {
     }
 
     // Setters, if necessary
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }

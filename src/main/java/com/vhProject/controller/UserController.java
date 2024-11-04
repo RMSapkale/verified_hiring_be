@@ -1,7 +1,7 @@
 package com.vhProject.controller;
 
-import com.vhProject.Dto.RegisterDto;
-import com.vhProject.Dto.LoginDto;
+import com.vhProject.dto.RegisterDto;
+import com.vhProject.dto.LoginDto;
 import com.vhProject.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;

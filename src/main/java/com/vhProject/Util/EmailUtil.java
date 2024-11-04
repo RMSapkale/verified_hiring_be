@@ -11,19 +11,19 @@ import javax.mail.internet.MimeMessage;
 @Component
 public class EmailUtil {
 
+    private final JavaMailSender javaMailSender;
 
-    private JavaMailSender javaMailSender;
+    @Autowired
+    public EmailUtil(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
-    public void sendOtpEmail(String email, String otp) throws MessagingException {
+    public void sendOtpEmail(String to, String otp) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
-        mimeMessageHelper.setTo(email);
-        mimeMessageHelper.setSubject("Verify OTP");
-        mimeMessageHelper.setText("""
-        <div>
-            <a href="http://localhost:8080/verify-account?email=%s&otp=%s" target="_blank">Click link to verify password</a>
-        </div>
-        """.formatted(email, otp), true);
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(to);
+        helper.setSubject("Your OTP Code");
+        helper.setText("Your OTP is: " + otp, true);
         javaMailSender.send(mimeMessage);
     }
 

@@ -1,7 +1,6 @@
 package com.vhProject.Util;
 
 import java.security.SecureRandom;
-import java.util.Base64;
 
 public class OtpUtil {
     private static final int OTP_LENGTH = 6; // Length of OTP
