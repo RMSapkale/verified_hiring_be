@@ -1,7 +1,7 @@
 package com.vhProject.service;
 
 import com.vhProject.Util.EmailUtil;
-import com.vhProject.Util.OtpUtil;
+import com.vhProject.config.CommonClasses;
 import com.vhProject.repository.UserRepository;
 import com.vhProject.model.UserModel; // Import the User class
 import com.vhProject.dto.RegisterDto;
@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
 @Service
 public class UserService {
 
-    private OtpUtil OtpUtil;
-
     private final EmailUtil emailUtil;
 
     @Autowired
@@ -29,8 +27,8 @@ public class UserService {
     private UserRepository userRepository;
 
     public String register(RegisterDto registerDto) throws MessagingException {
-        String otp = OtpUtil.generateOtp();
-        emailUtil.sendOtpEmail(registerDto.getEmail(), otp);
+        Integer otp = Integer.parseInt(CommonClasses.generateSixDigitOTP());
+        emailUtil.sendOtpEmail(registerDto.getEmail(), otp, registerDto.getName());
         UserModel user = new UserModel(); // Use UserModel class here
         user.setName(registerDto.getName());
         user.setEmail(registerDto.getEmail());
@@ -54,24 +52,24 @@ public class UserService {
     }
 
     public String regenerateOtp(String email) throws MessagingException {
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
-        String otp = OtpUtil.generateOtp();
-        emailUtil.sendOtpEmail(email, otp);
-        user.setOtp(otp);
-        user.setOtpGeneratedTime(LocalDateTime.now());
-        userRepository.save(user);
+//        UserModel user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
+//        String otp = OtpUtil.generateOtp();
+//        emailUtil.sendOtpEmail(email, otp);
+//        user.setOtp(otp);
+//        user.setOtpGeneratedTime(LocalDateTime.now());
+//        userRepository.save(user);
         return "Email sent... please verify account within 1 minute";
     }
 
     public String login(LoginDto loginDto) {
-        UserModel user = userRepository.findByEmail(loginDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found with this email: " + loginDto.getEmail()));
-        if (!loginDto.getPassword().equals(user.getPassword())) {
-            return "Password is incorrect";
-        } else if (!user.isActive()) {
-            return "Your account is not verified";
-        }
+//        UserModel user = userRepository.findByEmail(loginDto.getEmail())
+//                .orElseThrow(() -> new RuntimeException("User not found with this email: " + loginDto.getEmail()));
+//        if (!loginDto.getPassword().equals(user.getPassword())) {
+//            return "Password is incorrect";
+//        } else if (!user.isActive()) {
+//            return "Your account is not verified";
+//        }
         return "Login successful";
     }
 

@@ -20,7 +20,7 @@ public class UserModel {
     private String name;
     private String email;
     private String password;
-    private String otp;
+    private Integer otp;
     private LocalDateTime otpGeneratedTime;
     private boolean active;
 }
