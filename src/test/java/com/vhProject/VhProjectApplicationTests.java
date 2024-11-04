@@ -1,10 +1,10 @@
-package com.verifiedHiring;
+package com.vhProject;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class VerifiedHiringApplicationTests {
+class VhProjectApplicationTests {
 
 	@Test
 	void contextLoads() {

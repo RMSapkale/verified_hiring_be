@@ -1,13 +1,13 @@
-package com.verifiedHiring;
+package com.vhProject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class VerifiedHiringApplication {
+public class VhProjectApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(VerifiedHiringApplication.class, args);
+		SpringApplication.run(VhProjectApplication.class, args);
 	}
 
 }
