@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -27,14 +28,14 @@ public class UserService {
     private UserRepository userRepository;
 
     public String register(RegisterDto registerDto) throws MessagingException {
-        Integer otp = Integer.parseInt(CommonClasses.generateSixDigitOTP());
-        emailUtil.sendOtpEmail(registerDto.getEmail(), otp, registerDto.getName());
-        UserModel user = new UserModel(); // Use UserModel class here
+       // Integer otp = Integer.parseInt(CommonClasses.generateSixDigitOTP());
+       // emailUtil.sendOtpEmail(registerDto.getEmail(), otp, registerDto.getName());
+       UserModel user = new UserModel(); // Use UserModel class here
         user.setName(registerDto.getName());
         user.setEmail(registerDto.getEmail());
         user.setPassword(registerDto.getPassword());
-        user.setOtp(otp);
-        user.setOtpGeneratedTime(LocalDateTime.now());
+       // user.setOtp(otp);
+       // user.setOtpGeneratedTime(LocalDateTime.now());
         userRepository.save(user);
         return "User registration successful";
     }
@@ -63,13 +64,16 @@ public class UserService {
     }
 
     public String login(LoginDto loginDto) {
-//        UserModel user = userRepository.findByEmail(loginDto.getEmail())
-//                .orElseThrow(() -> new RuntimeException("User not found with this email: " + loginDto.getEmail()));
-//        if (!loginDto.getPassword().equals(user.getPassword())) {
-//            return "Password is incorrect";
-//        } else if (!user.isActive()) {
-//            return "Your account is not verified";
-//        }
+        Optional<UserModel> user = userRepository.findByEmail(loginDto.getEmail());
+                //.orElseThrow(() -> new RuntimeException("User not found with this email: " + loginDto.getEmail()));
+        if(user.isEmpty()){
+            return "email not found , please provide valid email";
+        }
+        if (!loginDto.getPassword().equals(user.get().getPassword())) {
+            return "Password is incorrect";
+        } else if (!user.get().isActive()) {
+            return "Your account is not verified";
+       }
         return "Login successful";
     }
 

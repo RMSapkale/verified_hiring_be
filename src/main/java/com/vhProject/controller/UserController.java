@@ -37,7 +37,7 @@ public class UserController {
     public ResponseEntity<String> regenerateOtp(@RequestParam String email) throws MessagingException {
         return new ResponseEntity<>(userService.regenerateOtp(email), HttpStatus.OK);
     }
-    @PutMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
         return new ResponseEntity<>(userService.login(loginDto), HttpStatus.OK);
     }
