@@ -31,9 +31,9 @@ public class EmailUtil {
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
                 message.setFrom(senderEmail);
                 message.setTo(email);
-                message.setSubject("Interview Portal OTP Verification");
+                message.setSubject("Verified Hiring OTP Verification");
                 String emailBody = "<html>" + "<head>" + "<style>" + "body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }" + ".container { max-width: 600px; margin: 0 auto; padding: 20px; }" + ".header { background-color: #4c81ba; color: #ffffff; text-align: center; padding: 1px 0; }" + ".content { background-color: #ffffff; padding: 30px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }" + ".footer { background-color: #f4f4f4; color: #666666; text-align: center; padding: 1px 0; font-size: 12px; }" + ".otp-text { font-size: 24px; text-align: center; }" + // Style for OTP text
-                        "</style>" + "</head>" + "<body>" + "<div class='container'>" + "<div class='header'>" + "<h2>Interview Portal OTP Verification</h2>" + "</div>" + "<div class='content'>" + "<p>Hi " + Arrays.stream(name.split("\\s+")).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1)).collect(Collectors.joining(" ")) + ",</p>" + "<p>Use the following OTP to complete your registration procedure.<br>" + "This OTP is valid for 5 minutes.</p>" + "<p class='otp-text'><b>" + otp + "</b></p><br>" + "<div class='footer'>" + "<p>&copy; iWingsHR. All rights reserved.</p>" + "</div>" + "</body>" + "</html>";
+                        "</style>" + "</head>" + "<body>" + "<div class='container'>" + "<div class='header'>" + "<h2>Verified Hiring OTP Verification</h2>" + "</div>" + "<div class='content'>" + "<p>Hi " + Arrays.stream(name.split("\\s+")).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1)).collect(Collectors.joining(" ")) + ",</p>" + "<p>Use the following OTP to complete your registration procedure.<br>" + "This OTP is valid for 5 minutes.</p>" + "<p class='otp-text'><b>" + otp + "</b></p><br>" + "<div class='footer'>" + "<p>&copy; iWingsHR. All rights reserved.</p>" + "</div>" + "</body>" + "</html>";
                 message.setText(emailBody, true);
             }
         });
