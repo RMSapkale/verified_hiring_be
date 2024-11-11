@@ -28,12 +28,11 @@ public class UserController {
         return new ResponseEntity<>(userService.register(registerDto), HttpStatus.OK);
     }
 
-    @PutMapping("/verify-account")
-    public ResponseEntity<String> verifyAccount(@RequestParam String email,
-                                                @RequestParam String otp) {
+    @PostMapping("/verify-account")
+    public ResponseEntity<String> verifyAccount(@RequestParam String email, @RequestParam Integer otp) {
         return new ResponseEntity<>(userService.verifyAccount(email, otp), HttpStatus.OK);
     }
-    @PutMapping("/regenerate-otp")
+    @PostMapping ("/regenerate-otp") //end point url
     public ResponseEntity<String> regenerateOtp(@RequestParam String email) throws MessagingException {
         return new ResponseEntity<>(userService.regenerateOtp(email), HttpStatus.OK);
     }
