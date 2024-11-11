@@ -100,12 +100,14 @@ public class UserService {
     }
 
     public String setPassword(String email, String newPassword) {
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(
-                        () -> new RuntimeException("User not found with this email: " + email));
-
-        user.setPassword(newPassword);
-        userRepository.save(user);
-        return "new password set successfully, login with new password";
+        UserModel user = userRepository.findByEmail(email).orElse(null);
+        if(user != null){
+            user.setPassword(newPassword);
+            userRepository.save(user);
+            return "Password reset successfully";
+        }
+        else {
+            return "Invalid details";
+        }
     }
 }
