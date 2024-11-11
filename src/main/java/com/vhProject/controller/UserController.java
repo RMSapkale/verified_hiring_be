@@ -25,12 +25,12 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) throws MessagingException {
+    public ResponseEntity<Object> register(@RequestBody RegisterDto registerDto) throws MessagingException {
         return new ResponseEntity<>(userService.register(registerDto), HttpStatus.OK);
     }
 
     @PostMapping("/verify-account")
-    public ResponseEntity<String> verifyAccount(@RequestParam String email, @RequestParam Integer otp) {
+    public ResponseEntity<Object> verifyAccount(@RequestParam String email, @RequestParam Integer otp) {
         return new ResponseEntity<>(userService.verifyAccount(email, otp), HttpStatus.OK);
     }
     @PostMapping ("/regenerate-otp") //end point url
