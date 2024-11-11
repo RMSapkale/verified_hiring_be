@@ -37,8 +37,8 @@ public class UserController {
         return new ResponseEntity<>(userService.regenerateOtp(email), HttpStatus.OK);
     }
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        return new ResponseEntity<>(userService.login(loginDto), HttpStatus.OK);
+    public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) {
+        return userService.login(loginDto);
     }
 
     @PutMapping("/forget-password")

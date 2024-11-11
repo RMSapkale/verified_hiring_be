@@ -2,6 +2,7 @@ package com.vhProject.service;
 
 import com.vhProject.Util.EmailUtil;
 import com.vhProject.config.CommonClasses;
+import com.vhProject.config.MessageConfig;
 import com.vhProject.repository.UserRepository;
 import com.vhProject.model.UserModel; // Import the User class
 import com.vhProject.dto.RegisterDto;
@@ -9,11 +10,15 @@ import com.vhProject.dto.LoginDto;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
+
+import static com.vhProject.service.ResponseHandler.generateResponse;
 
 @Service
 public class UserService {
@@ -76,18 +81,17 @@ public class UserService {
        }
     }
 
-    public String login(LoginDto loginDto) {
+    public ResponseEntity<Object> login(LoginDto loginDto) {
         Optional<UserModel> user = userRepository.findByEmail(loginDto.getEmail());
-                //.orElseThrow(() -> new RuntimeException("User not found with this email: " + loginDto.getEmail()));
         if(user.isEmpty()){
-            return "email not found , please provide valid email";
+            return generateResponse(MessageConfig.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND,null);
         }
         if (!loginDto.getPassword().equals(user.get().getPassword())) {
-            return "Password is incorrect";
+            return generateResponse(MessageConfig.INVALID_PASSWORD, HttpStatus.NOT_FOUND,null);
         } else if (!user.get().isActive()) {
-            return "Your account is not verified";
-       }
-        return "Login successful";
+            return generateResponse(MessageConfig.INVALID_ACCOUNT, HttpStatus.NOT_FOUND,null);
+        }
+        return generateResponse(MessageConfig.LOGIN_SUCCESSFULLY, HttpStatus.OK,null);
     }
 
 
