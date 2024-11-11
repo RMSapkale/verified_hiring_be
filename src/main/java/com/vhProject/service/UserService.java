@@ -4,7 +4,7 @@ import com.vhProject.Util.EmailUtil;
 import com.vhProject.config.CommonClasses;
 import com.vhProject.config.MessageConfig;
 import com.vhProject.repository.UserRepository;
-import com.vhProject.model.UserModel; // Import the User class
+import com.vhProject.model.UserModel;
 import com.vhProject.dto.RegisterDto;
 import com.vhProject.dto.LoginDto;
 import javax.mail.MessagingException;
@@ -34,84 +34,83 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public String register(RegisterDto registerDto) throws MessagingException {
-       // Integer otp = Integer.parseInt(CommonClasses.generateSixDigitOTP());
-       // emailUtil.sendOtpEmail(registerDto.getEmail(), otp, registerDto.getName());
-       UserModel user = new UserModel(); // Use UserModel class here
+    public ResponseEntity<Object> register(RegisterDto registerDto) throws MessagingException {
+        Integer otp = random.nextInt(900000) + 100000;
+        emailUtil.sendOtpEmail(registerDto.getEmail(), otp, registerDto.getName());
+        UserModel user = new UserModel();
         user.setName(registerDto.getName());
-        user.setEmail(registerDto.getEmail());
+        user.setEmail(registerDto.getEmail().toLowerCase());
         user.setPassword(registerDto.getPassword());
-       // user.setOtp(otp);
-       // user.setOtpGeneratedTime(LocalDateTime.now());
+        user.setOtp(otp);
+        user.setOtpGeneratedTime(LocalDateTime.now());
         userRepository.save(user);
-        return "User registration successful";
+        return generateResponse(MessageConfig.VALID_ACCOUNT, HttpStatus.OK, null);
     }
 
-    public String verifyAccount(String email, Integer otp) {
-        UserModel user = userRepository.findByEmail(email).orElse(null);
-        if(user != null ){
-            if (!user.getOtp().equals(otp)) {
-                return "Invalid OTP; please try again.";
+    public ResponseEntity<Object> verifyAccount(String email, Integer otp) {
+        UserModel user = userRepository.findByEmail(email.toLowerCase()).orElse(null);
+        if(user != null) {
+            if (user.getOtp() == null || !user.getOtp().equals(otp)) {
+                return generateResponse(MessageConfig.INVALID_OTP, HttpStatus.FORBIDDEN, null);
+
             } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() >= 60) {
-                return "OTP expired; please regenerate a new one and try again.";
+                return generateResponse(MessageConfig.INVALID_OTP, HttpStatus.UNAUTHORIZED, null);
             } else {
                 user.setActive(true);
                 userRepository.save(user);
-                return "OTP verified";
+                return generateResponse(MessageConfig.VALID_OTP, HttpStatus.OK, null);
             }
-        }
-        else {
-            return "Please provide valid email";
+        } else {
+            return generateResponse(MessageConfig.VALID_ACCOUNT, HttpStatus.OK, null);
         }
     }
 
-    public String regenerateOtp(String email) throws MessagingException {
-       UserModel user = userRepository.findByEmail(email).orElse(null);
-       if(user==null){
-           return "email not found";
-       }
-
-      else{
-           Integer otp = random.nextInt(900000) + 100000;
-           emailUtil.sendOtpEmail(email, otp,"SAVIM");
-           user.setOtp(otp);
-           user.setOtpGeneratedTime(LocalDateTime.now());
-           userRepository.save(user);
-           return "Email sent... please verify account within 1 minute";
-       }
+    public ResponseEntity<Object> regenerateOtp(String email) throws MessagingException {
+        UserModel user = userRepository.findByEmail(email.toLowerCase()).orElse(null);
+        if(user == null) {
+            return generateResponse(MessageConfig.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND, null);
+        } else {
+            Integer otp = random.nextInt(900000) + 100000;
+            emailUtil.sendOtpEmail(email, otp, user.getName());
+            user.setOtp(otp);
+            user.setOtpGeneratedTime(LocalDateTime.now());
+            userRepository.save(user);
+            return generateResponse(MessageConfig.VALID_ACCOUNT, HttpStatus.OK, null);
+        }
     }
 
     public ResponseEntity<Object> login(LoginDto loginDto) {
-        Optional<UserModel> user = userRepository.findByEmail(loginDto.getEmail());
-        if(user.isEmpty()){
-            return generateResponse(MessageConfig.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND,null);
+        Optional<UserModel> user = userRepository.findByEmail(loginDto.getEmail().toLowerCase());
+        if(user.isEmpty()) {
+            return generateResponse(MessageConfig.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND, null);
         }
         if (!loginDto.getPassword().equals(user.get().getPassword())) {
-            return generateResponse(MessageConfig.INVALID_PASSWORD, HttpStatus.NOT_FOUND,null);
+            return generateResponse(MessageConfig.INVALID_PASSWORD, HttpStatus.UNAUTHORIZED, null);
         } else if (!user.get().isActive()) {
-            return generateResponse(MessageConfig.INVALID_ACCOUNT, HttpStatus.NOT_FOUND,null);
+            return generateResponse(MessageConfig.INVALID_ACCOUNT, HttpStatus.FORBIDDEN, null);
         }
-        return generateResponse(MessageConfig.LOGIN_SUCCESSFULLY, HttpStatus.OK,null);
+        return generateResponse(MessageConfig.LOGIN_SUCCESSFULLY, HttpStatus.OK, null);
+    }
+
+    public ResponseEntity<Object> forgotPassword(String email) throws MessagingException {
+        UserModel user = userRepository.findByEmail(email.toLowerCase()).orElse(null);
+        if (user == null) {
+            return generateResponse(MessageConfig.INVALID_ACCOUNT, HttpStatus.NOT_FOUND, null);
+        } else {
+            emailUtil.sendSetPasswordEmail(email);
+            return generateResponse(MessageConfig.VALID_PASSWORD, HttpStatus.OK, null);
+        }
     }
 
 
-    public String forgotPassword(String email) throws MessagingException {
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(
-                        () -> new RuntimeException("User not found with this email: " + email));
-        emailUtil.sendSetPasswordEmail(email);
-        return "Please Check your email to set new password to your account";
-    }
-
-    public String setPassword(String email, String newPassword) {
-        UserModel user = userRepository.findByEmail(email).orElse(null);
-        if(user != null){
+    public ResponseEntity<Object> setPassword(String email, String newPassword) {
+        UserModel user = userRepository.findByEmail(email.toLowerCase()).orElse(null);
+        if(user != null) {
             user.setPassword(newPassword);
             userRepository.save(user);
-            return "Password reset successfully";
-        }
-        else {
-            return "Invalid details";
+            return generateResponse(MessageConfig.VALID_PASSWORD, HttpStatus.OK, null);
+        } else {
+            return generateResponse(MessageConfig.INVALID_PASSWORD, HttpStatus.NOT_FOUND, null);
         }
     }
 }

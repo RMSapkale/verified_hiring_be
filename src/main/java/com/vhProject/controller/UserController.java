@@ -2,6 +2,7 @@ package com.vhProject.controller;
 
 import com.vhProject.dto.RegisterDto;
 import com.vhProject.dto.LoginDto;
+import com.vhProject.model.UserModel;
 import com.vhProject.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class UserController {
         return new ResponseEntity<>(userService.verifyAccount(email, otp), HttpStatus.OK);
     }
     @PostMapping ("/regenerate-otp") //end point url
-    public ResponseEntity<String> regenerateOtp(@RequestParam String email) throws MessagingException {
-        return new ResponseEntity<>(userService.regenerateOtp(email), HttpStatus.OK);
+    public ResponseEntity<Object> regenerateOtp(@RequestParam String email) throws MessagingException {
+        return userService.regenerateOtp(email);
     }
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginDto loginDto) {
@@ -42,12 +43,12 @@ public class UserController {
     }
 
     @PutMapping("/forget-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) throws MessagingException {
-        return new ResponseEntity<>(userService.forgotPassword(email),HttpStatus.OK);
+    public ResponseEntity<Object> forgotPassword(@RequestParam String email) throws MessagingException {
+        return userService.forgotPassword(email);
     }
     @PutMapping("/set-password")
-    public ResponseEntity<String> setPassword(@RequestParam String email, @RequestHeader String newPassword){
-        return new ResponseEntity<>(userService.setPassword(email, newPassword),HttpStatus.OK);
+    public ResponseEntity<Object> setPassword(@RequestParam String email, @RequestParam String  newPassword){
+        return userService.setPassword( email,newPassword );
     }
 
 }
