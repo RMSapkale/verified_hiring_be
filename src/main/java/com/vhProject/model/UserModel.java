@@ -4,6 +4,7 @@ package com.vhProject.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,5 +19,8 @@ public class UserModel {
     private Long id;
     private String name;
     private String email;
-    private Long number;
+    private String password;
+    private Integer otp;
+    private LocalDateTime otpGeneratedTime;
+    private boolean active;
 }
