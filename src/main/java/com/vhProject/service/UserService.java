@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserService {
 
     private final EmailUtil emailUtil;
+    private static final Random random = new Random();
 
     @Autowired
     public UserService(EmailUtil emailUtil) {
@@ -40,27 +42,38 @@ public class UserService {
         return "User registration successful";
     }
 
-    public String verifyAccount(String email, String otp) {
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
-        if (user.getOtp().equals(otp) && Duration.between(user.getOtpGeneratedTime(),
-                LocalDateTime.now()).getSeconds() < (1 * 60)) {
-            user.setActive(true);
-            userRepository.save(user);
-            return "OTP verified you can login";
+    public String verifyAccount(String email, Integer otp) {
+        UserModel user = userRepository.findByEmail(email).orElse(null);
+        if(user != null ){
+            if (!user.getOtp().equals(otp)) {
+                return "Invalid OTP; please try again.";
+            } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() >= 60) {
+                return "OTP expired; please regenerate a new one and try again.";
+            } else {
+                user.setActive(true);
+                userRepository.save(user);
+                return "OTP verified";
+            }
         }
-        return "Please regenerate otp and try again";
+        else {
+            return "Please provide valid email";
+        }
     }
 
     public String regenerateOtp(String email) throws MessagingException {
-//        UserModel user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new RuntimeException("User not found with this email: " + email));
-//        String otp = OtpUtil.generateOtp();
-//        emailUtil.sendOtpEmail(email, otp);
-//        user.setOtp(otp);
-//        user.setOtpGeneratedTime(LocalDateTime.now());
-//        userRepository.save(user);
-        return "Email sent... please verify account within 1 minute";
+       UserModel user = userRepository.findByEmail(email).orElse(null);
+       if(user==null){
+           return "email not found";
+       }
+
+      else{
+           Integer otp = random.nextInt(900000) + 100000;
+           emailUtil.sendOtpEmail(email, otp,"SAVIM");
+           user.setOtp(otp);
+           user.setOtpGeneratedTime(LocalDateTime.now());
+           userRepository.save(user);
+           return "Email sent... please verify account within 1 minute";
+       }
     }
 
     public String login(LoginDto loginDto) {
@@ -87,12 +100,14 @@ public class UserService {
     }
 
     public String setPassword(String email, String newPassword) {
-        UserModel user = userRepository.findByEmail(email)
-                .orElseThrow(
-                        () -> new RuntimeException("User not found with this email: " + email));
-
-        user.setPassword(newPassword);
-        userRepository.save(user);
-        return "new password set successfully, login with new password";
+        UserModel user = userRepository.findByEmail(email).orElse(null);
+        if(user != null){
+            user.setPassword(newPassword);
+            userRepository.save(user);
+            return "Password reset successfully";
+        }
+        else {
+            return "Invalid details";
+        }
     }
 }
