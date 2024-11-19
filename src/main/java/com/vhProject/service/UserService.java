@@ -35,13 +35,13 @@ public class UserService {
     private UserRepository userRepository;
 
     public ResponseEntity<Object> register(RegisterDto registerDto) throws MessagingException {
-        Integer otp = random.nextInt(900000) + 100000;
-        emailUtil.sendOtpEmail(registerDto.getEmail(), otp, registerDto.getName());
-        UserModel user = new UserModel();
+        UserModel user;
+        Optional<UserModel> userModel = userRepository.findByEmail(registerDto.getEmail());
+        user = userModel.orElseGet(UserModel::new);
         user.setName(registerDto.getName());
         user.setEmail(registerDto.getEmail().toLowerCase());
         user.setPassword(registerDto.getPassword());
-        user.setOtp(otp);
+        user.setActive(true);
         user.setOtpGeneratedTime(LocalDateTime.now());
         userRepository.save(user);
         return generateResponse(MessageConfig.VALID_ACCOUNT, HttpStatus.OK, null);
@@ -51,10 +51,10 @@ public class UserService {
         UserModel user = userRepository.findByEmail(email.toLowerCase()).orElse(null);
         if(user != null) {
             if (user.getOtp() == null || !user.getOtp().equals(otp)) {
-                return generateResponse(MessageConfig.INVALID_OTP, HttpStatus.FORBIDDEN, null);
+                return generateResponse(MessageConfig.INVALID_OTP, HttpStatus.NOT_FOUND, null);
 
             } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() >= 60) {
-                return generateResponse(MessageConfig.INVALID_OTP, HttpStatus.UNAUTHORIZED, null);
+                return generateResponse(MessageConfig.OTP_EXPIRE, HttpStatus.NOT_FOUND, null);
             } else {
                 user.setActive(true);
                 userRepository.save(user);
@@ -66,15 +66,16 @@ public class UserService {
     }
 
     public ResponseEntity<Object> regenerateOtp(String email) throws MessagingException {
-        UserModel user = userRepository.findByEmail(email.toLowerCase()).orElse(null);
-        if(user == null) {
+        Optional<UserModel> user = userRepository.findByEmail(email.toLowerCase());
+        if(user.isEmpty()) {
             return generateResponse(MessageConfig.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND, null);
         } else {
+            UserModel userModel = user.get();
             Integer otp = random.nextInt(900000) + 100000;
-            emailUtil.sendOtpEmail(email, otp, user.getName());
-            user.setOtp(otp);
-            user.setOtpGeneratedTime(LocalDateTime.now());
-            userRepository.save(user);
+            emailUtil.sendOtpEmail(email, otp, userModel.getName());
+            userModel.setOtp(otp);
+            userModel.setOtpGeneratedTime(LocalDateTime.now());
+            userRepository.save(userModel);
             return generateResponse(MessageConfig.VALID_ACCOUNT, HttpStatus.OK, null);
         }
     }
@@ -85,7 +86,7 @@ public class UserService {
             return generateResponse(MessageConfig.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND, null);
         }
         if (!loginDto.getPassword().equals(user.get().getPassword())) {
-            return generateResponse(MessageConfig.INVALID_PASSWORD, HttpStatus.UNAUTHORIZED, null);
+            return generateResponse(MessageConfig.VALID_PASSWORD, HttpStatus.OK, null);
         } else if (!user.get().isActive()) {
             return generateResponse(MessageConfig.INVALID_ACCOUNT, HttpStatus.FORBIDDEN, null);
         }

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
 
+import static com.vhProject.service.ResponseHandler.generateResponse;
+
 @RestController
 public class UserController {
 
@@ -26,12 +28,12 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody RegisterDto registerDto) throws MessagingException {
-        return new ResponseEntity<>(userService.register(registerDto), HttpStatus.OK);
+        return userService.register(registerDto);
     }
 
     @PostMapping("/verify-account")
     public ResponseEntity<Object> verifyAccount(@RequestParam String email, @RequestParam Integer otp) {
-        return new ResponseEntity<>(userService.verifyAccount(email, otp), HttpStatus.OK);
+        return userService.verifyAccount(email, otp);
     }
     @PostMapping ("/regenerate-otp") //end point url
     public ResponseEntity<Object> regenerateOtp(@RequestParam String email) throws MessagingException {
