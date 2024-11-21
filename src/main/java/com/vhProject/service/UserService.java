@@ -53,7 +53,7 @@ public class UserService {
             if (user.getOtp() == null || !user.getOtp().equals(otp)) {
                 return generateResponse(MessageConfig.INVALID_OTP, HttpStatus.NOT_FOUND, null);
 
-            } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() >= 60) {
+            } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() >= 300) {
                 return generateResponse(MessageConfig.OTP_EXPIRE, HttpStatus.NOT_FOUND, null);
             } else {
                 user.setActive(true);
@@ -113,5 +113,17 @@ public class UserService {
         } else {
             return generateResponse(MessageConfig.INVALID_PASSWORD, HttpStatus.NOT_FOUND, null);
         }
+    }
+    public ResponseEntity<Object> resendOtp(String email) throws MessagingException {
+        Optional<UserModel> userOptional = userRepository.findByEmail(email.toLowerCase());
+        if (userOptional.isEmpty()) {
+            return generateResponse(MessageConfig.EMAIL_NOT_FOUND, HttpStatus.NOT_FOUND, null);
+        }
+
+        UserModel user = userOptional.get();
+        regenerateOtp(user.getEmail());
+        // Send the OTP via email
+        emailUtil.sendOtpEmail(user.getEmail(),user.getOtp(), user.getName());
+        return generateResponse(MessageConfig.OTP_SENT_SUCCESSFULLY, HttpStatus.OK, null);
     }
 }

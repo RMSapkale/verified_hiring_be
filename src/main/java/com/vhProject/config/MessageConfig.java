@@ -13,5 +13,6 @@ public class MessageConfig {
     public static final String VALID_OTP="Your otp is verified";
     public static final String INVALID_OTP="Your otp is incorrect";
     public static final String OTP_EXPIRE="Your otp is expired";
+   public static final String OTP_SENT_SUCCESSFULLY="otp sent successfully";
 
 }

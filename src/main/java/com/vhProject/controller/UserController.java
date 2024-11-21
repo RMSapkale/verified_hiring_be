@@ -49,9 +49,16 @@ public class UserController {
         return userService.forgotPassword(email);
     }
     @PutMapping("/set-password")
-    public ResponseEntity<Object> setPassword(@RequestParam String email, @RequestParam String  newPassword){
-        return userService.setPassword( email,newPassword );
+    public ResponseEntity<Object> setPassword(@RequestParam String email, @RequestParam String  newPassword) throws MessagingException {
+        return userService.setPassword(email, newPassword);
     }
 
-}
-//
+    @PutMapping("/resend-otp")
+        public ResponseEntity<Object> resendOtp(@RequestParam String email) throws MessagingException {
+            return userService.resendOtp(email);
+        }
+    }
+
+
+
+
