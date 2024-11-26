@@ -4,6 +4,7 @@ package com.vhProject.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,4 +24,5 @@ public class UserModel {
     private Integer otp;
     private LocalDateTime otpGeneratedTime;
     private boolean active;
+
 }
