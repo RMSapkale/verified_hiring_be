@@ -14,5 +14,10 @@ public class MessageConfig {
     public static final String INVALID_OTP="Your otp is incorrect";
     public static final String OTP_EXPIRE="Your otp is expired";
    public static final String OTP_SENT_SUCCESSFULLY="otp sent successfully";
-
+    public static final String Fetched_all_projects_successfully="fetched all the projects successfully";
+    public static final String Project_found="Project found";
+    public static final String Project_not_found="Project not found";
+    public static final String Project_created_successfully="Project created successfully";
+    public static final String Project_updated_successfully="Project updated successfully";
+    public static final String Project_deleted_successfully="Project deleted successfully";
 }

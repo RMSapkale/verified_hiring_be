@@ -1,5 +1,6 @@
 package com.vhProject.controller;
 
+import com.vhProject.config.MessageConfig;
 import com.vhProject.model.Project;
 import com.vhProject.service.ProjectService;
 import com.vhProject.service.ResponseHandler;
@@ -20,32 +21,32 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<Object> getAllProjects() {
         List<Project> projects = projectService.getAllProjects();
-        return ResponseHandler.generateResponse("Fetched all projects successfully", HttpStatus.OK, projects);
+        return ResponseHandler.generateResponse(MessageConfig.Fetched_all_projects_successfully, HttpStatus.OK, projects);
     }
 
     @GetMapping("/getProjectById/{id}")
     public ResponseEntity<Object> getProjectById(@PathVariable Long id) {
         Project project = projectService.getProjectById(id);
         if (project != null) {
-            return ResponseHandler.generateResponse("Project found", HttpStatus.OK, project);
+            return ResponseHandler.generateResponse(MessageConfig.Project_found, HttpStatus.OK, project);
         } else {
-            return ResponseHandler.generateResponse("Project not found", HttpStatus.NOT_FOUND, null);
+            return ResponseHandler.generateResponse(MessageConfig.Project_not_found, HttpStatus.NOT_FOUND, null);
         }
     }
 
     @PostMapping("/CreateProject")
     public ResponseEntity<Object> createProject(@RequestBody Project project) {
         Project createdProject = projectService.saveProject(project);
-        return ResponseHandler.generateResponse("Project created successfully", HttpStatus.CREATED, createdProject);
+        return ResponseHandler.generateResponse(MessageConfig.Project_created_successfully, HttpStatus.CREATED, createdProject);
     }
 
     @PutMapping("/UpdateProject/{id}")
     public ResponseEntity<Object> updateProject(@PathVariable Long id, @RequestBody Project updatedProject) {
         Project project = projectService.updateProject(id, updatedProject);
         if (project != null) {
-            return ResponseHandler.generateResponse("Project updated successfully", HttpStatus.OK, project);
+            return ResponseHandler.generateResponse(MessageConfig.Project_updated_successfully, HttpStatus.OK, project);
         } else {
-            return ResponseHandler.generateResponse("Project not found", HttpStatus.NOT_FOUND, null);
+            return ResponseHandler.generateResponse(MessageConfig.Project_not_found, HttpStatus.NOT_FOUND, null);
         }
     }
 
@@ -53,9 +54,9 @@ public class ProjectController {
     public ResponseEntity<Object> deleteProject(@PathVariable Long id) {
         boolean isDeleted = projectService.deleteProject(id);
         if (isDeleted) {
-            return ResponseHandler.generateResponse("Project deleted successfully", HttpStatus.OK, null);
+            return ResponseHandler.generateResponse(MessageConfig.Project_deleted_successfully, HttpStatus.OK, null);
         } else {
-            return ResponseHandler.generateResponse("Project not found", HttpStatus.NOT_FOUND, null);
+            return ResponseHandler.generateResponse(MessageConfig.Project_not_found, HttpStatus.NOT_FOUND, null);
         }
     }
 }
