@@ -27,7 +27,7 @@ public class Candidate {
     private String email;
     private String password;
     private String workStatus; // E.g., "Fresher" or "Experienced"
-   private boolean isFresher; // true if fresher, false otherwise
+    private boolean isFresher; // true if fresher, false otherwise
 
     @Lob
     private byte[] profilePhoto; // To store profile photo as binary data
@@ -108,11 +108,11 @@ public class Candidate {
         this.workStatus = workStatus;
     }
 
-  public boolean isFresher() {
+    public boolean isFresher() {
         return isFresher;
     }
 
-   public void setFresher(boolean fresher) {
+    public void setFresher(boolean fresher) {
         isFresher = fresher;
     }
 
